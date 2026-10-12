@@ -1,19 +1,24 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { RobotsService } from './robots.service';
 import { CreateRobotDto } from './dto/create-robot.dto';
-import type { Robot } from './robots.service';
+import { Robot } from './entities/robot.entity';
 
 @Controller('robots')
 export class RobotsController {
     constructor(private readonly robotsService: RobotsService) { }
 
     @Post()
-    create(@Body() dto: CreateRobotDto): Robot {
+    async create(@Body() dto: CreateRobotDto): Promise<Robot> {
         return this.robotsService.create(dto);
     }
 
     @Get()
-    findAll(): Robot[] {
+    async findAll(): Promise<Robot[]> {
         return this.robotsService.findAll();
+    }
+
+    @Get(':id')
+    async findOne(@Param('id') id:string): Promise<Robot> {
+        return this.robotsService.findOne(Number(id));
     }
 }

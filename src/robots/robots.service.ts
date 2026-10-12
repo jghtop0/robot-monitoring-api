@@ -1,35 +1,49 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { 
+    BadRequestException, 
+    Injectable,
+    NotAcceptableException,
+    NotFoundException,
+} from '@nestjs/common';
 import { CreateRobotDto } from './dto/create-robot.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
-export interface Robot {
-    id: number;
-    name: string;
-    createdAt: string;
-}
+import { Robot } from './entities/robot.entity';
+import { Repository } from 'typeorm';
+
+
 
 @Injectable()
 export class RobotsService {
-    private readonly robots: Robot[] = [];
-    private nextId = 1;
+    constructor(
+        @InjectRepository(Robot)
+        private readonly robotRepository: Repository<Robot>,
+    ) {}
 
-    create(dto: CreateRobotDto): Robot {
+    async create(dto: CreateRobotDto): Promise<Robot> {
         if (typeof dto?.name !== 'string' || dto.name.trim() === '') {
-            throw new BadRequestException('로봇 이름을 입력해 주세요.');
-        }
-
-        const robot: Robot = {
-            id: this.nextId++, //사용할 번호
-            name: dto.name.trim(), //이름 앞뒤의 공백 제거
-            createdAt: new Date().toISOString(),
-        };
-
-        this.robots.push(robot); //생성한 로봇 배열에 추가
-
-        return robot;
+        throw new BadRequestException("로봇 이름을 입력해 주세요.");
     }
 
-    findAll(): Robot[] {
-        return this.robots;
+    const robot = this.robotRepository.create({
+        name:  dto.name.trim(),
+    });
+
+        return this.robotRepository.save(robot);
+    }
+
+    async findAll(): Promise<Robot[]> {
+        return this.robotRepository.find();
+    }
+
+    async findOne(id: number): Promise<Robot> {
+        const robot = await this.robotRepository.findOne({
+            where: { id },
+        });
+
+        if(!robot) {
+            throw new NotFoundException('로봇을 찾을 수 없습니다.');
+        }
+        return robot;
     }
 
 
