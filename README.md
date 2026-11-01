@@ -20,47 +20,10 @@ ESP32에 연결된 토양 수분 센서의 ADC 값을 읽어 NestJS 서버로 �
 토양 수분 ADC 값을 기준으로 현재 상태를 판단합니다.
 
 ### 실제 구현 흐름
-
-```text
-Soil Moisture Sensor
-        ↓
-    ESP32 GPIO34
-        ↓
-      Wi-Fi
-        ↓
-    HTTP POST
-        ↓
-      NestJS
-        ↓
-  DTO Validation
-        ↓
-    Service
-        ↓
-   TypeORM
-        ↓
-      MySQL
-```
-
----
-
 ## 🏗 System Architecture
 
-```mermaid
-flowchart LR
-    A[Soil Moisture Sensor]
-    B[ESP32]
-    C[NestJS API Server]
-    D[TypeORM]
-    E[(MySQL)]
-    F[Swagger / API Client]
+![Uploading Robot-Monitoring-Infrastructure-Architecture.png…]()
 
-    A -->|ADC| B
-    B -->|Wi-Fi / HTTP POST| C
-    C -->|DTO Validation| C
-    C -->|Telemetry Processing| D
-    D --> E
-    F -->|HTTP GET| C
-```
 
 ### 데이터 처리 과정
 
