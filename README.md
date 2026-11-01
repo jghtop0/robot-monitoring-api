@@ -1,4 +1,4 @@
-# 🤖 Robot Monitoring API
+# Robot Monitoring API
 
 ESP32와 센서를 활용하여 실제 센서 데이터를 수집하고,  
 NestJS 서버에서 데이터를 저장·조회·판단하는 **디바이스 모니터링 프로젝트**입니다.
@@ -20,9 +20,13 @@ ESP32에 연결된 토양 수분 센서의 ADC 값을 읽어 NestJS 서버로 �
 토양 수분 ADC 값을 기준으로 현재 상태를 판단합니다.
 
 ### 실제 구현 흐름
+`Soil Moisture Sensor → ESP32 → Wi-Fi / HTTP → NestJS → MySQL`
+
 ## 🏗 System Architecture
 
-![Uploading Robot-Monitoring-Infrastructure-Architecture.png…]()
+<p align="center">
+  <img src="./docs/images/system-architecture.png" width="1000" alt="Robot Monitoring API System Architecture" />
+</p>
 
 
 ### 데이터 처리 과정
