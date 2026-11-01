@@ -54,4 +54,18 @@ export class RobotsController {
   ): Promise<RobotTelemetry> {
     return this.robotsService.createTelemetry(Number(id), dto);
   }
+  @Get(':id/telemetry/latest')
+  async findLatestTelemetry(@Param('id') id: string): Promise<RobotTelemetry> {
+    return this.robotsService.findLatestTelemetry(Number(id));
+  }
+  @Get(':id/telemetry/history')
+  async findTelemetryHistory(
+    @Param('id') id: string,
+    @Query('limit') limit?: string,
+  ): Promise<RobotTelemetry[]> {
+    return this.robotsService.findTelemetryHistory(
+      Number(id),
+      limit ? Number(limit) : 10,
+    );
+  }
 }

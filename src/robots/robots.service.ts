@@ -1,4 +1,9 @@
 import {
+  determineSoilMoistureStatus,
+  SoilMoistureStatus,
+} from './utils/soil-moisture-status.util';
+
+import {
   BadRequestException,
   Injectable,
   NotFoundException,
@@ -67,7 +72,6 @@ export class RobotsService {
 
     return this.robotStatusRepository.save(robotStatus);
   }
-
   async findLatestStatus(robotId: number): Promise<RobotStatus> {
     await this.findOne(robotId);
 
@@ -77,6 +81,7 @@ export class RobotsService {
       },
       order: {
         createdAt: 'DESC',
+        id: 'DESC',
       },
     });
 
@@ -85,6 +90,31 @@ export class RobotsService {
     }
 
     return status;
+  }
+
+  async findLatestTelemetry(
+    robotId: number,
+  ): Promise<RobotTelemetry & { status: SoilMoistureStatus }> {
+    await this.findOne(robotId);
+
+    const telemetry = await this.robotTelemetryRepository.findOne({
+      where: {
+        robot: { id: robotId },
+      },
+      order: {
+        createdAt: 'DESC',
+        id: 'DESC',
+      },
+    });
+
+    if (!telemetry) {
+      throw new NotFoundException('텔레메트리 이력이 없습니다.');
+    }
+
+    return {
+      ...telemetry,
+      status: determineSoilMoistureStatus(telemetry.soilMoisture),
+    };
   }
 
   async findStatusHistory(
@@ -119,5 +149,28 @@ export class RobotsService {
     });
 
     return this.robotTelemetryRepository.save(telemetry);
+  }
+
+  async findTelemetryHistory(
+    robotId: number,
+    limit: number,
+  ): Promise<(RobotTelemetry & { status: SoilMoistureStatus })[]> {
+    await this.findOne(robotId);
+
+    const telemetries = await this.robotTelemetryRepository.find({
+      where: {
+        robot: { id: robotId },
+      },
+      order: {
+        createdAt: 'DESC',
+        id: 'DESC',
+      },
+      take: limit,
+    });
+
+    return telemetries.map((telemetry) => ({
+      ...telemetry,
+      status: determineSoilMoistureStatus(telemetry.soilMoisture),
+    }));
   }
 }
