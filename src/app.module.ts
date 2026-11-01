@@ -5,7 +5,8 @@ import { RobotsModule } from './robots/robots.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Robot } from './robots/entities/robot.entity';
-
+import { RobotStatus } from './robots/entities/robot-status.entity';
+import { RobotTelemetry } from './robots/entities/robot-telemetry.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -20,7 +21,7 @@ import { Robot } from './robots/entities/robot.entity';
         username: ConfigService.get<string>('DB_USERNAME'),
         password: ConfigService.get<string>('DB_PASSWORD'),
         database: ConfigService.get<string>('DB_DATABASE'),
-        entities: [Robot],
+        entities: [Robot, RobotStatus, RobotTelemetry],
         synchronize: true,
       }),
     }),
@@ -30,4 +31,4 @@ import { Robot } from './robots/entities/robot.entity';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
